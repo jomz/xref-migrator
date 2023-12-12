@@ -1,0 +1,21 @@
+# Non-Crossref DOI to Crossref migration helper
+
+This script could help you if you need to re-register DOIs for a journal that
+you took over under a new DOI prefix. In our case, the existing DOI metadata
+were registered partly in Crossref and in mEDRA.
+
+Expected input is (a) CSV file(s) with pairs of doi,new_target_url.
+The script will then look up the existing metadata, and prepare one XML file
+per journal issue in the output directory.
+These can then be deposited in the Crossref Administration Console.
+
+If any of the provided DOI could not be found on Crossref nor mEDRA,
+a file failed_doi.txt will also be created in the output directory.
+
+In our case, the metadata registered by the previous publisher was rather minimal.
+Hence the re-building of the metadata, too, is rather simple.
+Do have a look at the code and/or the output files to make sure that the copied
+metadata are complete!
+
+If not, welp ... at least you have a good starting point to expand on.
+Please send pull requests if any modifications you make seem useful to others!
