@@ -105,7 +105,14 @@ def build_xrefxml_from_articles_data(articles)
   volume, issue = articles.first[:article][:volume], articles.first[:article][:issue]
   batch_id = "#{volume}.#{issue}"
 
-  Builder::XmlMarkup.new(indent: 2).doi_batch(version: '5.3.1', xmlns: "http://www.crossref.org/schema/5.3.1") do |build|
+  Builder::XmlMarkup.new(indent: 2).doi_batch(version: '5.3.1',
+    :xmlns => "http://www.crossref.org/schema/5.3.1",
+    :"xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+    :"xsi:schemaLocation" => "http://www.crossref.org/schema/5.3.1 https://www.crossref.org/schemas/crossref5.3.1.xsd",
+    :"xmlns:jats" => "http://www.ncbi.nlm.nih.gov/JATS1",
+    :"xmlns:fr" => "http://www.crossref.org/fundref.xsd",
+    :"xmlns:mml" => "http://www.w3.org/1998/Math/MathML"
+    ) do |build|
     build.head do |h|
       h.doi_batch_id(batch_id)
       h.timestamp(Time.now.strftime("%Y%m%d%H%M%S"))
@@ -122,12 +129,12 @@ def build_xrefxml_from_articles_data(articles)
           jmd.issn(articles.first[:journal][:issn])
         end
         j.journal_issue do |ji|
-          ji.issue(issue)
           ji.publication_date do |pd|
             pd.year(articles.first[:article][:published][:year])
             pd.month(articles.first[:article][:published][:month]) unless articles.first[:article][:published][:month].nil?
             pd.day(articles.first[:article][:published][:day]) unless articles.first[:article][:published][:day].nil?
           end
+          ji.issue(issue)
         end
         articles.each do |article|
           j.journal_article do |ja|
@@ -137,7 +144,8 @@ def build_xrefxml_from_articles_data(articles)
             if article[:article][:authors].length > 0
               ja.contributors do |c|
                 article[:article][:authors].each do |author|
-                  c.person_name do |pn|
+                  first = (author == article[:article][:authors].first) ? {sequence: 'first', contributor_role: 'author'} : {contributor_role: 'author'}
+                  c.person_name(first) do |pn|
                     pn.surname(author[:family])
                     pn.given_name(author[:given]) unless author[:given].nil?
                   end
