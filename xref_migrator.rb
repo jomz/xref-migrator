@@ -144,8 +144,8 @@ def build_xrefxml_from_articles_data(articles)
             if article[:article][:authors].length > 0
               ja.contributors do |c|
                 article[:article][:authors].each do |author|
-                  first = (author == article[:article][:authors].first) ? {sequence: 'first', contributor_role: 'author'} : {contributor_role: 'author'}
-                  c.person_name(first) do |pn|
+                  first = (author == article[:article][:authors].first) ? 'first' : 'additional'
+                  c.person_name(sequence: first, contributor_role: 'author') do |pn|
                     pn.surname(author[:family])
                     pn.given_name(author[:given]) unless author[:given].nil?
                   end
