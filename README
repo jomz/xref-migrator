@@ -4,10 +4,18 @@ This script could help you if you need to re-register DOIs for a journal that
 you took over under a new DOI prefix. In our case, the existing DOI metadata
 were registered partly in Crossref and in mEDRA.
 
-Expected input is (a) CSV file(s) with pairs of doi,new_target_url.
-The script will then look up the existing metadata, and prepare one XML file
-per journal issue in the output directory.
-These can then be deposited in the Crossref Administration Console.
+PROVIDED 'AS IS', USE AT YOUR OWN RISK YADA YADA
+
+Authored by Benny Degezelle for the publisher Universa Press and
+for the journal Tijdschrift voor Geneeskunde.
+
+## Usage:
+
+1. Place (a) CSV file(s) with pairs of doi,new_target_url inside the 'input' dir.
+2. Run `bundle install` to make sure all dependencies are met.
+3. Run `ruby xref-migrator.rb` and wait for it to finish.
+4. Find one XML file per journal issue in the 'output' directory.
+These should be good to upload to the Crossref Administration Console.
 
 If any of the provided DOI could not be found on Crossref nor mEDRA,
 a file failed_doi.txt will also be created in the output directory.
