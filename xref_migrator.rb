@@ -73,6 +73,14 @@ def get_doi_metadata(doi)
       return nil
     else
       doc = REXML::Document.new(medra_response.body)
+      # Our legacy data had some entries where multiple authors were comma separated
+      # into one author element. Fixing those first;
+      authors = []
+      doc.root.get_elements('//Contributor//PersonName').each do |n|
+        n.get_text.to_s.split(',').each do |c|
+          authors << {family: c.strip}
+        end
+      end
       data = {
         journal: {
           full_title: doc.root.get_elements('//SerialWork//TitleText').first.get_text,
@@ -85,9 +93,7 @@ def get_doi_metadata(doi)
           title: doc.root.get_elements('//ContentItem//Title//TitleText').first.get_text,
           first_page: doc.root.get_elements('//FirstPageNumber').first.get_text,
           last_page: doc.root.get_elements('//LastPageNumber').first.get_text,
-          authors: doc.root.get_elements('//Contributor//PersonName').map{ |n|
-            {family: n.get_text}
-          },
+          authors: authors,
           resource_url: doc.root.get_elements('//DOIWebsiteLink').first.get_text,
           published: {
             year: doc.root.get_elements('//JournalIssueDate//Date').first.get_text
@@ -118,7 +124,7 @@ def build_xrefxml_from_articles_data(articles)
       h.timestamp(Time.now.strftime("%Y%m%d%H%M%S"))
       h.depositor do |d|
         d.depositor_name(@depositor_name)
-        d.depositor_email(@depositor_email)
+        d.email_address(@depositor_email)
       end
       h.registrant(@registrant_name)
     end
@@ -153,9 +159,9 @@ def build_xrefxml_from_articles_data(articles)
               end
             end
             ja.publication_date do |pd|
-              pd.year(article[:article][:published][:year])
               pd.month(article[:article][:published][:month]) unless article[:article][:published][:month].nil?
               pd.day(article[:article][:published][:day]) unless article[:article][:published][:day].nil?
+              pd.year(article[:article][:published][:year])
             end
             ja.pages do |p|
               p.first_page(article[:article][:first_page])
