@@ -136,9 +136,9 @@ def build_xrefxml_from_articles_data(articles)
         end
         j.journal_issue do |ji|
           ji.publication_date do |pd|
-            pd.year(articles.first[:article][:published][:year])
             pd.month(articles.first[:article][:published][:month]) unless articles.first[:article][:published][:month].nil?
             pd.day(articles.first[:article][:published][:day]) unless articles.first[:article][:published][:day].nil?
+            pd.year(articles.first[:article][:published][:year])
           end
           ji.issue(issue)
         end
