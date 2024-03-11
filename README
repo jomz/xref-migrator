@@ -20,6 +20,10 @@ These should be good to upload to the Crossref Administration Console.
 If any of the provided DOI could not be found on Crossref nor mEDRA,
 a file failed_doi.txt will also be created in the output directory.
 
+Finally, a file transfer_list.tsv will also be generated in the output dir.
+This is requested by CNRI to set up the redirects from the old to the new DOIs.
+Send this to member@crossref.org or whoever follows up on the transfer at crossref. 
+
 In our case, the metadata registered by the previous publisher was rather minimal.
 Hence the re-building of the metadata, too, is rather simple.
 Do have a look at the code and/or the output files to make sure that the copied
