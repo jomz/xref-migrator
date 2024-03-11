@@ -7,7 +7,7 @@ contact_email = "you@example.com"
 # Add your CSV input files to the 'input' directory.
 # The CSV file lists one pair of 'DOI,new URL' per line, see input.example.csv.
 # These DOI use the current, soon-to-be-old prefix.
-
+@old_prefix = '10.nnnnn'
 @new_prefix = '10.nnnnn'
 
 @depositor_name = 'Your name'
@@ -183,6 +183,8 @@ end
 
 volumes = {}
 @failed_doi =  []
+@processed_doi = []
+
 Dir.foreach('input') do |filename|
   next if File.directory? filename
   puts "Processing #{filename}..."
@@ -207,8 +209,19 @@ Dir.foreach('input') do |filename|
       output_filename = "#{volume}-#{issue}-articles.xml"
       xml = build_xrefxml_from_articles_data(articles)
       File.write("output/#{output_filename}", xml)
+      @processed_doi.concat articles.map{|a| a[:article][:doi].split("/")[1] }.uniq
     end
   end
+
+  unless @processed_doi.empty?
+    File.write(
+      "output/transfer_list.tsv", 
+      @processed_doi.map{ |d| 
+        "#{@old_prefix}/#{d}\t#{@new_prefix}/#{d}" 
+      }.join("\n")
+    )
+  end
+
   unless @failed_doi.empty?
     File.write("output/failed_doi.txt", @failed_doi.join("\n"))
   end
