@@ -209,7 +209,7 @@ Dir.foreach('input') do |filename|
       output_filename = "#{volume}-#{issue}-articles.xml"
       xml = build_xrefxml_from_articles_data(articles)
       File.write("output/#{output_filename}", xml)
-      @processed_doi.concat articles.map{|a| a[:article][:doi].split("/")[1] }.uniq
+      @processed_doi.concat articles.map{|a| a[:article][:doi].split("/")[1..-1].join('/') }.uniq
     end
   end
 
